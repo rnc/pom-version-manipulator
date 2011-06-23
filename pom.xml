@@ -21,14 +21,14 @@
 
   <groupId>com.redhat.rcm</groupId>
   <artifactId>pom-version-manipulator</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.9.1-redhat</version>
 
   <name>Red Hat Artifact-Version Manipulator</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <mavenVersion>3.0.3</mavenVersion>
-    <maeVersion>1.0-alpha-1-SNAPSHOT</maeVersion>
+    <maeVersion>0.9.1-redhat</maeVersion>
   </properties>
 
   <dependencies>
