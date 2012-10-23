@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.apache.maven.mae.project.key.FullProjectKey;
 import org.apache.maven.mae.project.key.VersionlessProjectKey;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.Plugin;
@@ -473,7 +474,6 @@ public class ToolchainModder
                 final Plugin managedPlugin = session.getManagedPlugin( pluginKey );
 
                 final Plugin p = plugin.clone();
-
                 if ( !session.isStrict() || managedPlugin != null )
                 {
                     // Unless strict mode is set, remove the plugin version. It SHOULD come from the toolchain.
@@ -484,7 +484,6 @@ public class ToolchainModder
                 if ( managedPlugin != null )
                 {
                     LOGGER.info( "Stripping plugin version from: " + pluginKey );
-
                     if ( isEmpty( plugin.getDependencies() ) && isEmpty( plugin.getExecutions() )
                         && plugin.getConfiguration() == null )
                     {
@@ -492,7 +491,19 @@ public class ToolchainModder
 
                         plugins.remove( plugin );
                     }
-
+                    
+//                    if ( ! isEmpty( plugin.getDependencies() ) )
+//                    {
+//                        for (Dependency d : plugin.getDependencies())
+//                        {
+//                            VersionlessProjectKey key = new VersionlessProjectKey (d.getGroupId(), d.getArtifactId());
+//                            LOGGER.info( "Stripping dependency using plugin toolchain from " + key );
+//                            if (session.getManagedPlugin( key ) != null)
+//                            {
+//                                d.setVersion (null);
+//                            }
+//                        }
+//                    }
                     changed = true;
 
                     if ( parentKey != null )

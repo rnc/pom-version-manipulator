@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.mae.project.ProjectToolsException;
@@ -538,5 +539,39 @@ public class VersionManagerSession
     public Map<File, Map<ProjectKey, FullProjectKey>> getRelocatedCoordinatesByFile()
     {
         return changeInfo.getRelocatedCoordinatesByFile();
+    }
+    
+    /*
+     * This should search through the defined properties. It will look for 
+     * versionmapper.<groupId>-<artifactId>
+     * version.<groupId>-<artifactId>
+     * and return the value held there.
+     */
+    public String replacePropertyVersion (Project project, String groupId, String artifactId)
+    {
+        String result = null;
+
+        final Model model = project.getModel();
+        final Properties props = managedInfo.getPropertyMapping().getAllProperties();
+        final Set<String> commonKeys = props.stringPropertyNames();
+
+        String mapper = "versionmappper." + groupId + '-' + artifactId;
+        String direct = "version." + groupId + '-' + artifactId;
+
+        System.err.println ("### Current projects " + getCurrentProjects());
+        System.err.println ("### Got direct " + direct + " and commonKeys" + commonKeys);
+        for ( final String key : commonKeys )
+        {
+            if (key.equals( mapper ))
+            {
+                result = "${" + props.getProperty( key ) + "}";
+            }
+            else if (key.equals( direct ))
+            {
+                result = "${" + direct + "}";
+            }
+        }
+        System.err.println ("### Returning result " + result );
+        return result;
     }
 }

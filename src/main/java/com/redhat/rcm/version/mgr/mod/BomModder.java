@@ -229,9 +229,10 @@ public class BomModder
         // ...assume it will be added from the capture POM.
         if ( version != null || !session.isStrict() )
         {
+            LOGGER.info( "### Wiping out dep " + version + " isManaged " + isManaged + " original version " + d.getVersion());
             d.setVersion( null );
-            if ( isManaged && ( dep.getScope() == null || dep.getExclusions() == null || dep.getExclusions()
-                                                                                            .isEmpty() ) )
+            if ( isManaged && 
+                ( dep.getScope() == null && (dep.getExclusions() == null || dep.getExclusions().isEmpty() ) ))
             {
                 result = DepModResult.DELETED;
             }

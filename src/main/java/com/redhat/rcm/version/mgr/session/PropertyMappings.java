@@ -40,6 +40,12 @@ public class PropertyMappings
 
     private final VersionManagerSession session;
 
+    /**
+     * All of the fully interpolated properties.
+     */
+    private Properties allProperties;
+
+    
     public PropertyMappings( final Map<String, String> newMappings, final VersionManagerSession session )
     {
         this.session = session;
@@ -57,6 +63,11 @@ public class PropertyMappings
         return mappings.get( key );
     }
 
+    public Properties getAllProperties ()
+    {
+        return allProperties;
+    }
+    
     private void addMappings( final Map<String, String> newMappings, final VersionManagerSession session )
     {
         final Pattern pattern = Pattern.compile( EXPRESSION_PATTERN );
@@ -92,6 +103,8 @@ public class PropertyMappings
      */
     void updateProjectMap( final Properties properties )
     {
+        this.allProperties = properties;
+        
         final Set<Map.Entry<String, String>> contents = expressions.entrySet();
         for ( final Iterator<Map.Entry<String, String>> i = contents.iterator(); i.hasNext(); )
         {
