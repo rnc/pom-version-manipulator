@@ -278,6 +278,44 @@ public class VersionManager
         }
 
         logger.info( "Modifying " + models.size() + " project(s)..." );
+        
+        final List<String> modderKeys = session.getModderKeys();
+        Collections.sort( modderKeys, ProjectModder.KEY_COMPARATOR );
+        List<String> subsetModderKeys = new ArrayList<String>();
+
+        if ( modderKeys.contains( "testremoval" ) )
+        {
+            subsetModderKeys.add( "testremoval" );
+            modderKeys.remove ( "testremoval" );
+        }
+        if ( modderKeys.contains ( "minimize" ) )
+        {
+            subsetModderKeys.add( "minimize" );
+            modderKeys.remove ( "minimize" );
+        }
+        if ( subsetModderKeys.size() > 0)
+        {
+            modProject (session, subsetModderKeys, basedir, preserveDirs, result);
+        }
+        
+        // Now do a second pass over the projects with the other modders.
+        modProject (session, modderKeys, basedir, preserveDirs, result);
+
+        if ( session.getCapturePom() != null )
+        {
+            capturer.captureMissing( session );
+
+            logger.warn( "\n\n\n\nMissing version information has been logged to:\n\n\t" + session.getCapturePom()
+                                                                                                  .getAbsolutePath()
+                + "\n\n\n\n" );
+        }
+
+        return result;
+    }
+
+    
+    private void modProject (VersionManagerSession session, List<String> modderKeys, File basedir, boolean preserveDirs, Set<File> result)
+    {
         for ( final Project project : session.getCurrentProjects() )
         {
             if ( ( project.getGroupId()
@@ -291,9 +329,6 @@ public class VersionManager
                 continue;
             }
             logger.info( "Modifying '" + project.getKey() + "'..." );
-
-            final List<String> modderKeys = session.getModderKeys();
-            Collections.sort( modderKeys, ProjectModder.KEY_COMPARATOR );
 
             boolean changed = false;
             if ( modders != null )
@@ -360,19 +395,8 @@ public class VersionManager
                 logger.info( project.getKey() + " NOT modified." );
             }
         }
-
-        if ( session.getCapturePom() != null )
-        {
-            capturer.captureMissing( session );
-
-            logger.warn( "\n\n\n\nMissing version information has been logged to:\n\n\t" + session.getCapturePom()
-                                                                                                  .getAbsolutePath()
-                + "\n\n\n\n" );
-        }
-
-        return result;
     }
-
+    
     private File writePom( final Model model, final ProjectKey originalCoord, final String originalVersion,
                            final File pom, final File basedir, final VersionManagerSession session,
                            final boolean preserveDirs )
