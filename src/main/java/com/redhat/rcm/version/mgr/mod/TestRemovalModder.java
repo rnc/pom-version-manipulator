@@ -116,11 +116,12 @@ public class TestRemovalModder
                                     new VersionlessProjectKey( managedDep.getGroupId(), managedDep.getArtifactId() );
 
                                 if ( depvpk.equals( depmgmtvpk ) && dep.getScope() == null
+                                    && managedDep.getType().equals( dep.getType() )
                                     && managedDep.getScope() != null && managedDep.getScope()
                                                                                   .equals( "test" ) )
                                 {
                                     logger.info( "Removing scoped test dependency " + managedDep.toString() + " for '"
-                                        + project.getKey() + "'..." );
+                                        + project.getKey() + "' after matching dependency management..." );
                                     movedDeps.add( managedDep );
                                     it.remove();
                                     break;
